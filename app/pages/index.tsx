@@ -54,36 +54,17 @@ const Home: BlitzPage = () => {
     <div className="container">
       <main>
         <div className="logo">
-          <img src="/logo.png" alt="blitz.js" />
+          Aquata<sub>online</sub>
         </div>
         <p>
-          <strong>Congrats!</strong> Your app is ready, including user sign-up and log-in.
+          <strong>Welcome!</strong> The update is in progress :D
         </p>
         <div className="buttons" style={{ marginTop: "1rem", marginBottom: "1rem" }}>
           <Suspense fallback="Loading...">
             <UserInfo />
           </Suspense>
         </div>
-        <p>
-          <strong>
-            To add a new model to your app, <br />
-            run the following in your terminal:
-          </strong>
-        </p>
-        <pre>
-          <code>blitz generate all project name:string</code>
-        </pre>
-        <div style={{ marginBottom: "1rem" }}>(And select Yes to run prisma migrate)</div>
         <div>
-          <p>
-            Then <strong>restart the server</strong>
-          </p>
-          <pre>
-            <code>Ctrl + c</code>
-          </pre>
-          <pre>
-            <code>blitz dev</code>
-          </pre>
           <p>
             and go to{" "}
             <Link href="/user-list">
@@ -134,33 +115,17 @@ const Home: BlitzPage = () => {
           text-align: center;
         }
 
-        footer {
-          width: 100%;
-          height: 60px;
-          border-top: 1px solid #eaeaea;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          background-color: #45009d;
-        }
-
-        footer a {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer a {
-          color: #f4f4f4;
-          text-decoration: none;
-        }
-
         .logo {
+          position: relative;
           margin-bottom: 2rem;
+          font-size: 50px;
         }
 
-        .logo img {
-          width: 300px;
+        .logo sub {
+          position: absolute;
+          bottom: -15px;
+          right: -19px;
+          font-size: 20px;
         }
 
         .buttons {
@@ -194,18 +159,6 @@ const Home: BlitzPage = () => {
         .button-outline:hover {
           border-color: #45009d;
           color: #45009d;
-        }
-
-        pre {
-          background: #fafafa;
-          border-radius: 5px;
-          padding: 0.75rem;
-          text-align: center;
-        }
-        code {
-          font-size: 0.9rem;
-          font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
-            Bitstream Vera Sans Mono, Courier New, monospace;
         }
 
         .grid {
