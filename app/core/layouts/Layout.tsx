@@ -1,5 +1,5 @@
 import { ReactNode } from "react"
-import { Head } from "blitz"
+import { Head, Link, Routes } from "blitz"
 
 type LayoutProps = {
   title?: string
@@ -10,11 +10,12 @@ const Layout = ({ title, children }: LayoutProps) => {
   return (
     <>
       <Head>
-        <title>{title || "blitzquata"}</title>
+        <title>Aquata - {title || "Hello :)"}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Link href={Routes.Home()}>Home</Link>
 
-      {children}
+      <div className="p-2 w-full">{children}</div>
     </>
   )
 }

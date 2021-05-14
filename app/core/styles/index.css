@@ -6,3 +6,31 @@ html {
   @apply bg-blue-600;
   @apply text-white;
 }
+
+input,
+select {
+  @apply text-blue-800;
+  @apply px-1;
+  @apply py-2;
+  @apply rounded;
+  @apply appearance-none;
+}
+
+h1,
+h2,
+h3 {
+  @apply text-center;
+  @apply p-2;
+}
+
+h1 {
+  @apply text-2xl;
+}
+
+h2 {
+  @apply text-xl;
+}
+
+h3 {
+  @apply text-lg;
+}

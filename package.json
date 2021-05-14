@@ -16,7 +16,8 @@
     "schema": "db/schema.prisma"
   },
   "engines": {
-    "node": "16"
+    "node": "14",
+    "npm": "7"
   },
   "prettier": {
     "semi": false,

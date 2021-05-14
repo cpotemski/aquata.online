@@ -207,6 +207,9 @@ CREATE UNIQUE INDEX "Station.x_y_unique" ON "Station"("x", "y");
 CREATE UNIQUE INDEX "ResourceNode.x_y_unique" ON "ResourceNode"("x", "y");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "BuildJob.userId_timeLeft_type_unique" ON "BuildJob"("userId", "timeLeft", "type");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Commandship_userId_unique" ON "Commandship"("userId");
 
 -- CreateIndex

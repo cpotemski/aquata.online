@@ -127,6 +127,8 @@ model BuildJob {
   type     BuildJobType
   amount   Int
   timeLeft Int
+
+  @@unique([userId, timeLeft, type])
 }
 
 enum FleetAction {

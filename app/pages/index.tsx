@@ -1,9 +1,9 @@
-import { Suspense } from "react"
-import { Link, BlitzPage, useMutation, Routes, useQuery } from "blitz"
-import Layout from "app/core/layouts/Layout"
-import { useCurrentUser } from "app/core/hooks/useCurrentUser"
 import logout from "app/auth/mutations/logout"
-import getResources from "app/resources/queries/getResources"
+import Button from "app/core/components/Button"
+import { useCurrentUser } from "app/core/hooks/useCurrentUser"
+import Layout from "app/core/layouts/Layout"
+import { BlitzPage, Link, Routes, useMutation } from "blitz"
+import { Suspense } from "react"
 
 /*
  * This file is just for a pleasant getting started page for your new app.
@@ -17,18 +17,17 @@ const UserInfo = () => {
   if (currentUser) {
     return (
       <>
-        <button
-          className="button small"
+        <Button
+          className="absolute top-1 right-1"
+          small
           onClick={async () => {
             await logoutMutation()
           }}
         >
           Logout
-        </button>
+        </Button>
         <div>
-          User id: <code>{currentUser.id}</code>
-          <br />
-          User role: <code>{currentUser.role}</code>
+          Moin {currentUser.name} (Role: {currentUser.role})
         </div>
       </>
     )
@@ -50,19 +49,6 @@ const UserInfo = () => {
   }
 }
 
-const Resources = () => {
-  const [resources] = useQuery(getResources, null)
-
-  return (
-    <>
-      Aluminium: {resources?.aluminium.toString()} ({resources?.aluminiumHarvester}) <br />
-      Steel: {resources?.steel.toString()} ({resources?.steelHarvester}) <br />
-      Plutonium: {resources?.plutonium.toString()} ({resources?.plutoniumHarvester}) <br />
-      Updates: {resources?.updatedAt.toLocaleDateString()}
-    </>
-  )
-}
-
 const Home: BlitzPage = () => {
   return (
     <>
@@ -70,15 +56,18 @@ const Home: BlitzPage = () => {
       <Suspense fallback="Loading...">
         <UserInfo />
       </Suspense>
-      <div className="p-2">Resources:</div>
-      <Suspense fallback="Loading...">
-        <Resources />
-      </Suspense>
+
+      <ul>
+        <li>
+          <Link href={Routes.Resources()}>Resources</Link>
+        </li>
+      </ul>
     </>
   )
 }
 
 Home.suppressFirstRenderFlicker = true
 Home.getLayout = (page) => <Layout title="Home">{page}</Layout>
+Home.authenticate = { redirectTo: "/login" }
 
 export default Home

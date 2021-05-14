@@ -1,6 +1,8 @@
 import { ReactNode, PropsWithoutRef } from "react"
 import { Form as FinalForm, FormProps as FinalFormProps } from "react-final-form"
 import * as z from "zod"
+import { Button } from "app/core/components/Button"
+import { Link, Routes } from "blitz"
 export { FORM_ERROR } from "final-form"
 
 export interface FormProps<S extends z.ZodType<any, any>>
@@ -45,17 +47,17 @@ export function Form<S extends z.ZodType<any, any>>({
             </div>
           )}
 
-          {submitText && (
-            <button type="submit" disabled={submitting}>
-              {submitText}
-            </button>
-          )}
+          <div className="flex mt-2">
+            {submitText && (
+              <Button submit className="mr-2">
+                {submitText}
+              </Button>
+            )}
 
-          <style global jsx>{`
-            .form > * + * {
-              margin-top: 1rem;
-            }
-          `}</style>
+            <Button>
+              <Link href={Routes.SignupPage()}>Sign Up</Link>
+            </Button>
+          </div>
         </form>
       )}
     />
