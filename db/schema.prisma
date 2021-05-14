@@ -12,21 +12,40 @@ generator client {
 
 // --------------------------------------
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model User {
-  id             Int      @id @default(autoincrement())
+  id             String   @id @default(uuid())
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   name           String?
   email          String   @unique
   hashedPassword String?
-  role           String   @default("USER")
+  role           Role     @default(USER)
+  confirmed      Boolean  @default(false)
+  active         Boolean  @default(true)
 
-  tokens   Token[]
-  sessions Session[]
+  station       Station?
+  commandship   Commandship?
+  alliance      Alliance?      @relation(references: [id], fields: [allianceId])
+  allianceId    String?
+  tokens        Token[]
+  sessions      Session[]
+  buildJobs     BuildJob[]
+  fleets        Fleet[]
+  notifications Notification[]
+  sentMessages  Message[]
+  chats         Chat[]
 }
 
 model Session {
-  id                 Int       @id @default(autoincrement())
+  user   User?   @relation(fields: [userId], references: [id])
+  userId String?
+
+  id                 String    @id @default(uuid())
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
   expiresAt          DateTime?
@@ -35,31 +54,173 @@ model Session {
   antiCSRFToken      String?
   publicData         String?
   privateData        String?
+}
 
-  user   User? @relation(fields: [userId], references: [id])
-  userId Int?
+enum TokenType {
+  RESET_PASSWORD
+  CONFIRM_EMAIL
 }
 
 model Token {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  id          String    @id @default(uuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   hashedToken String
-  type        String
-  // See note below about TokenType enum
-  // type        TokenType
+  type        TokenType
   expiresAt   DateTime
   sentTo      String
-
-  user   User @relation(fields: [userId], references: [id])
-  userId Int
 
   @@unique([hashedToken, type])
 }
 
-// NOTE: It's highly recommended to use an enum for the token type
-//       but enums only work in Postgres.
-//       See: https://blitzjs.com/docs/database-overview#switch-to-postgresql
-// enum TokenType {
-//   RESET_PASSWORD
-// }
+model Station {
+  user   User   @relation(references: [id], fields: [userId])
+  userId String @unique
+
+  id                  String   @id @default(uuid())
+  x                   Int
+  y                   Int
+  harvester           Int      @default(10)
+  aluminiumPercentage Int      @default(40)
+  steelPercentage     Int      @default(35)
+  aluminiumHarvester  Int      @default(4)
+  steelHarvester      Int      @default(3)
+  plutoniumHarvester  Int      @default(3)
+  aluminium           Int      @default(1000)
+  steel               Int      @default(1000)
+  plutonium           Int      @default(1000)
+  updatedAt           DateTime @updatedAt
+
+  fleets         Fleet[] @relation("fleetsInStation")
+  incomingFleets Fleet[] @relation("incomingFleets")
+
+  @@unique([x, y])
+}
+
+enum ResourceType {
+  ALUMINIUM
+  STEEL
+  PLUTONIUM
+}
+
+model ResourceNode {
+  x    Int
+  y    Int
+  type ResourceType
+
+  @@unique([x, y])
+}
+
+enum BuildJobType {
+  SHIP
+  HARVESTER
+}
+
+model BuildJob {
+  user   User   @relation(references: [id], fields: [userId])
+  userId String
+
+  id       String       @id @default(uuid())
+  type     BuildJobType
+  amount   Int
+  timeLeft Int
+}
+
+enum FleetAction {
+  ATTACK
+  DEFEND
+}
+
+model Fleet {
+  user   User   @relation(references: [id], fields: [userId])
+  userId String
+
+  id String @id @default(uuid())
+
+  inStation     Station?     @relation(name: "fleetsInStation", references: [id], fields: [stationId])
+  stationId     String?
+  target        Station?     @relation(name: "incomingFleets", references: [id], fields: [targetId])
+  targetId      String?
+  action        FleetAction?
+  baseFleet     Boolean      @default(false)
+  travelTime    Int?
+  remainingTime Int?
+  actionTicks   Int?
+  returning     Boolean?
+
+  aluminium Int @default(0)
+  steel     Int @default(0)
+  plutonium Int @default(0)
+
+  piranha    Int @default(0)
+  jellyfish  Int @default(0)
+  shark      Int @default(0)
+  hackboat   Int @default(0)
+  taifun     Int @default(0)
+  blizzard   Int @default(0)
+  hurricane  Int @default(0)
+  tsunami    Int @default(0)
+  enterprise Int @default(0)
+  bermuda    Int @default(0)
+  kittyhawk  Int @default(0)
+  atlantis   Int @default(0)
+}
+
+enum NotificationType {
+  INFO
+  ALERT
+}
+
+model Notification {
+  user   User   @relation(references: [id], fields: [userId])
+  userId String
+
+  id      String           @id @default(uuid())
+  type    NotificationType
+  title   String
+  content String
+}
+
+model Commandship {
+  user   User   @relation(references: [id], fields: [userId])
+  userId String
+
+  id         String @id @default(uuid())
+  level      Int    @default(1)
+  experience Int    @default(0)
+}
+
+model Message {
+  user   User   @relation(references: [id], fields: [userId])
+  userId String
+
+  chat   Chat   @relation(references: [id], fields: [chatId])
+  chatId String
+
+  id      String @id @default(uuid())
+  message String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Chat {
+  id   String  @id @default(uuid())
+  name String?
+
+  messages Message[]
+  members  User[]
+  public   Boolean
+
+  updatedAt DateTime @updatedAt
+}
+
+model Alliance {
+  id   String @id @default(uuid())
+  name String
+
+  members User[]
+}

@@ -1,8 +1,9 @@
 import { Suspense } from "react"
-import { Link, BlitzPage, useMutation, Routes } from "blitz"
+import { Link, BlitzPage, useMutation, Routes, useQuery } from "blitz"
 import Layout from "app/core/layouts/Layout"
 import { useCurrentUser } from "app/core/hooks/useCurrentUser"
 import logout from "app/auth/mutations/logout"
+import getResources from "app/resources/queries/getResources"
 
 /*
  * This file is just for a pleasant getting started page for your new app.
@@ -49,136 +50,31 @@ const UserInfo = () => {
   }
 }
 
+const Resources = () => {
+  const [resources] = useQuery(getResources, null)
+
+  return (
+    <>
+      Aluminium: {resources?.aluminium.toString()} ({resources?.aluminiumHarvester}) <br />
+      Steel: {resources?.steel.toString()} ({resources?.steelHarvester}) <br />
+      Plutonium: {resources?.plutonium.toString()} ({resources?.plutoniumHarvester}) <br />
+      Updates: {resources?.updatedAt.toLocaleDateString()}
+    </>
+  )
+}
+
 const Home: BlitzPage = () => {
   return (
-    <div className="container">
-      <main>
-        <div className="logo">
-          Aquata<sub>online</sub>
-        </div>
-        <p>
-          <strong>Welcome!</strong> The update is in progress :D
-        </p>
-        <div className="buttons" style={{ marginTop: "1rem", marginBottom: "1rem" }}>
-          <Suspense fallback="Loading...">
-            <UserInfo />
-          </Suspense>
-        </div>
-        <div>
-          <p>
-            and go to{" "}
-            <Link href="/user-list">
-              <a>/user-list</a>
-            </Link>
-          </p>
-        </div>
-      </main>
-
-      <style jsx global>{`
-        @import url("https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;700&display=swap");
-
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family: "Libre Franklin", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-            Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-        }
-
-        * {
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-          box-sizing: border-box;
-        }
-        .container {
-          min-height: 100vh;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        main {
-          padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        main p {
-          font-size: 1.2rem;
-        }
-
-        p {
-          text-align: center;
-        }
-
-        .logo {
-          position: relative;
-          margin-bottom: 2rem;
-          font-size: 50px;
-        }
-
-        .logo sub {
-          position: absolute;
-          bottom: -15px;
-          right: -19px;
-          font-size: 20px;
-        }
-
-        .buttons {
-          display: grid;
-          grid-auto-flow: column;
-          grid-gap: 0.5rem;
-        }
-        .button {
-          font-size: 1rem;
-          background-color: #6700eb;
-          padding: 1rem 2rem;
-          color: #f4f4f4;
-          text-align: center;
-        }
-
-        .button.small {
-          padding: 0.5rem 1rem;
-        }
-
-        .button:hover {
-          background-color: #45009d;
-        }
-
-        .button-outline {
-          border: 2px solid #6700eb;
-          padding: 1rem 2rem;
-          color: #6700eb;
-          text-align: center;
-        }
-
-        .button-outline:hover {
-          border-color: #45009d;
-          color: #45009d;
-        }
-
-        .grid {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-wrap: wrap;
-
-          max-width: 800px;
-          margin-top: 3rem;
-        }
-
-        @media (max-width: 600px) {
-          .grid {
-            width: 100%;
-            flex-direction: column;
-          }
-        }
-      `}</style>
-    </div>
+    <>
+      <div className="text-white ml-auto mr-auto w-6/12 text-center p-4 text-3xl mb-4">Aquata</div>
+      <Suspense fallback="Loading...">
+        <UserInfo />
+      </Suspense>
+      <div className="p-2">Resources:</div>
+      <Suspense fallback="Loading...">
+        <Resources />
+      </Suspense>
+    </>
   )
 }
 
