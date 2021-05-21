@@ -14,7 +14,6 @@ module.exports = {
       new CronJob(
         "*/30 * * * * *",
         function () {
-          console.log("tick?")
           tick()
         },
         null,

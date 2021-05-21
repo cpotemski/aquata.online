@@ -61,6 +61,9 @@ const Home: BlitzPage = () => {
         <li>
           <Link href={Routes.Resources()}>Resources</Link>
         </li>
+        <li>
+          <Link href={Routes.MapPage()}>Map</Link>
+        </li>
       </ul>
     </>
   )

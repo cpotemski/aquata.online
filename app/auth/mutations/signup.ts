@@ -1,9 +1,12 @@
+import { Signup } from "app/auth/validations"
+import { Coordinate, findEmptySpaceOnMap } from "app/map/utils"
 import { resolver, SecurePassword } from "blitz"
 import db from "db"
-import { Signup } from "app/auth/validations"
 import { Role } from "types"
 
 export default resolver.pipe(resolver.zod(Signup), async ({ email, name, password }, ctx) => {
+  const userCoordinates: Coordinate = await findEmptySpaceOnMap()
+
   const hashedPassword = await SecurePassword.hash(password.trim())
   const user = await db.user.create({
     data: {
@@ -12,13 +15,10 @@ export default resolver.pipe(resolver.zod(Signup), async ({ email, name, passwor
       hashedPassword,
       role: "USER",
       station: {
-        create: {
-          x: Math.ceil(Math.random() * 100),
-          y: Math.ceil(Math.random() * 100),
-        },
+        create: userCoordinates,
       },
     },
-    select: { id: true, name: true, email: true, role: true },
+    select: { id: true, name: true, email: true, role: true, station: true },
   })
 
   await db.fleet.create({
