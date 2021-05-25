@@ -1,11 +1,11 @@
 import {
   AppProps,
-  ErrorComponent,
-  useRouter,
   AuthenticationError,
   AuthorizationError,
+  ErrorComponent,
   ErrorFallbackProps,
   useQueryErrorResetBoundary,
+  useRouter,
 } from "blitz"
 import { ErrorBoundary } from "react-error-boundary"
 import LoginForm from "app/auth/components/LoginForm"

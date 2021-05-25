@@ -1,4 +1,7 @@
-import { calculateHarvestersFromPercentages } from "app/resources/utils/harvesterCalculations"
+import {
+  calculateHarvestersFromPercentages,
+  calculateIncome,
+} from "app/resources/utils/harvesterCalculations"
 import db, { BuildJobType } from "db"
 
 export async function processBuildJobs() {
@@ -28,20 +31,17 @@ export async function processBuildJobs() {
         in: finishedHarvesters.map(({ userId }) => userId),
       },
     },
-    select: {
-      userId: true,
-      harvester: true,
-      aluminiumHarvester: true,
-      steelHarvester: true,
-      plutoniumHarvester: true,
-      aluminiumPercentage: true,
-      steelPercentage: true,
+    include: {
+      activeResourceNodes: true,
     },
   })
 
   await db.$transaction([
     ...finishedHarvesters.map(({ userId, amount }) => {
       const station = stations.find((station) => station.userId === userId)
+      if (station === undefined) {
+        throw Error("could not find station to add finished harvesters")
+      }
       const harvesters = calculateHarvestersFromPercentages((station?.harvester || 0) + amount, {
         aluminiumPercentage: station?.aluminiumPercentage || 30,
         steelPercentage: station?.steelPercentage || 30,
@@ -58,6 +58,7 @@ export async function processBuildJobs() {
           aluminiumHarvester: harvesters.aluminiumHarvester,
           steelHarvester: harvesters.steelHarvester,
           plutoniumHarvester: harvesters.plutoniumHarvester,
+          ...calculateIncome(station),
         },
       })
     }),

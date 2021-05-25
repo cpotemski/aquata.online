@@ -1,5 +1,5 @@
-import { findEmptySpaceOnMap } from "app/map/utils"
-import db, { ResourceNode, ResourceType } from "db"
+import { findMultipleEmptySpacesOnMap } from "app/map/utils"
+import db, { Prisma, ResourceType } from "db"
 
 const RESOURCE_NODES_PER_TYPE = 50
 
@@ -9,17 +9,21 @@ export const createResourceNodes = async () => {
     count: { _all: true },
   })
 
-  let newNodes: ResourceNode[] = []
+  let newNodes: Prisma.ResourceNodeCreateInput[] = []
 
   for (let resource of [ResourceType.ALUMINIUM, ResourceType.STEEL, ResourceType.PLUTONIUM]) {
     const existingCount = result.find((type) => type.type === resource)?.count?._all || 0
     const newCount = RESOURCE_NODES_PER_TYPE - existingCount
 
     if (newCount > 0) {
+      const emptyCoordinates = await findMultipleEmptySpacesOnMap(newCount)
+
       for (let _ of Array(newCount).fill("")) {
+        const newCoordinate = emptyCoordinates.pop() || { x: 0, y: 0 }
+
         newNodes.push({
           type: resource,
-          ...(await findEmptySpaceOnMap()),
+          ...newCoordinate,
         })
       }
     }

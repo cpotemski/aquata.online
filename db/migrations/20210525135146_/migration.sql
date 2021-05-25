@@ -5,7 +5,7 @@ CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
 CREATE TYPE "TokenType" AS ENUM ('RESET_PASSWORD', 'CONFIRM_EMAIL');
 
 -- CreateEnum
-CREATE TYPE "ResourceType" AS ENUM ('ALUMINIUM', 'STEEL', 'PLUTONIUM');
+CREATE TYPE "ResourceType" AS ENUM ('aluminium', 'steel', 'plutonium');
 
 -- CreateEnum
 CREATE TYPE "BuildJobType" AS ENUM ('SHIP', 'HARVESTER');
@@ -69,11 +69,14 @@ CREATE TABLE "Station" (
     "x" INTEGER NOT NULL,
     "y" INTEGER NOT NULL,
     "harvester" INTEGER NOT NULL DEFAULT 10,
-    "aluminiumPercentage" INTEGER NOT NULL DEFAULT 40,
-    "steelPercentage" INTEGER NOT NULL DEFAULT 35,
-    "aluminiumHarvester" INTEGER NOT NULL DEFAULT 4,
-    "steelHarvester" INTEGER NOT NULL DEFAULT 3,
-    "plutoniumHarvester" INTEGER NOT NULL DEFAULT 3,
+    "aluminiumPercentage" INTEGER NOT NULL DEFAULT 0,
+    "steelPercentage" INTEGER NOT NULL DEFAULT 0,
+    "aluminiumHarvester" INTEGER NOT NULL DEFAULT 0,
+    "steelHarvester" INTEGER NOT NULL DEFAULT 0,
+    "plutoniumHarvester" INTEGER NOT NULL DEFAULT 0,
+    "aluminiumIncome" INTEGER NOT NULL DEFAULT 0,
+    "steelIncome" INTEGER NOT NULL DEFAULT 0,
+    "plutoniumIncome" INTEGER NOT NULL DEFAULT 0,
     "aluminium" INTEGER NOT NULL DEFAULT 1000,
     "steel" INTEGER NOT NULL DEFAULT 1000,
     "plutonium" INTEGER NOT NULL DEFAULT 1000,
@@ -84,9 +87,12 @@ CREATE TABLE "Station" (
 
 -- CreateTable
 CREATE TABLE "ResourceNode" (
+    "id" TEXT NOT NULL,
     "x" INTEGER NOT NULL,
     "y" INTEGER NOT NULL,
-    "type" "ResourceType" NOT NULL
+    "type" "ResourceType" NOT NULL,
+
+    PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -188,6 +194,12 @@ CREATE TABLE "_ChatToUser" (
     "B" TEXT NOT NULL
 );
 
+-- CreateTable
+CREATE TABLE "_ResourceNodeToStation" (
+    "A" TEXT NOT NULL,
+    "B" TEXT NOT NULL
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User.email_unique" ON "User"("email");
 
@@ -217,6 +229,12 @@ CREATE UNIQUE INDEX "_ChatToUser_AB_unique" ON "_ChatToUser"("A", "B");
 
 -- CreateIndex
 CREATE INDEX "_ChatToUser_B_index" ON "_ChatToUser"("B");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_ResourceNodeToStation_AB_unique" ON "_ResourceNodeToStation"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_ResourceNodeToStation_B_index" ON "_ResourceNodeToStation"("B");
 
 -- AddForeignKey
 ALTER TABLE "User" ADD FOREIGN KEY ("allianceId") REFERENCES "Alliance"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -259,3 +277,9 @@ ALTER TABLE "_ChatToUser" ADD FOREIGN KEY ("A") REFERENCES "Chat"("id") ON DELET
 
 -- AddForeignKey
 ALTER TABLE "_ChatToUser" ADD FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_ResourceNodeToStation" ADD FOREIGN KEY ("A") REFERENCES "ResourceNode"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_ResourceNodeToStation" ADD FOREIGN KEY ("B") REFERENCES "Station"("id") ON DELETE CASCADE ON UPDATE CASCADE;

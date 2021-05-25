@@ -1,7 +1,15 @@
+import { distanceBetweenCoordinates } from "app/map/utils"
+import db, { ResourceNode } from "db"
+
 export const HARVESTER_COST: Partial<Resources> = {
   aluminium: 1000,
   steel: 1000,
 }
+
+const HARVESTER_CAPACITY = 500
+const HARVESTER_TRAVEL_SPEED = 3
+const HARVESTER_MINING_SPEED = 500
+const HARVESTER_UNLOAD_SPEED = 500
 
 type Resources = {
   aluminium: number
@@ -100,4 +108,78 @@ export const calculateHarvesterCosts = (count: number): Partial<Resources> => {
   )
 
   return costs
+}
+
+export const calculateIncome = async (station: {
+  activeResourceNodes: ResourceNode[]
+  x: number
+  y: number
+  aluminiumHarvester: number
+  steelHarvester: number
+  plutoniumHarvester: number
+}) => {
+  let income: Resources = {
+    aluminium: 0,
+    steel: 0,
+    plutonium: 0,
+  }
+
+  station.activeResourceNodes.forEach((resourceNode) => {
+    const distance = distanceBetweenCoordinates(station, resourceNode)
+
+    const timeForOneCycle =
+      distance / HARVESTER_TRAVEL_SPEED +
+      HARVESTER_CAPACITY / HARVESTER_MINING_SPEED +
+      HARVESTER_CAPACITY / HARVESTER_UNLOAD_SPEED
+
+    const cyclesPerTick = 1 / timeForOneCycle
+
+    income[resourceNode.type.toLowerCase()] =
+      Math.floor(cyclesPerTick * HARVESTER_CAPACITY) *
+      station[`${resourceNode.type.toLowerCase()}Harvester`]
+  })
+
+  console.log(station, income)
+
+  return {
+    aluminiumIncome: income.aluminium,
+    steelIncome: income.steel,
+    plutoniumIncome: income.plutonium,
+  }
+}
+
+export const updateHarvesterDistribution = async (userId: string, input) => {
+  const station = await db.station.findFirst({
+    where: { userId },
+    include: {
+      activeResourceNodes: true,
+    },
+  })
+
+  if (!station) return null
+
+  const percentages = calculateValidPercentages(
+    {
+      aluminiumPercentage: station.aluminiumPercentage,
+      steelPercentage: station.steelPercentage,
+    },
+    input
+  )
+
+  const harvesters = calculateHarvestersFromPercentages(station.harvester, percentages)
+
+  const income = await calculateIncome({
+    ...station,
+    ...harvesters,
+  })
+
+  return db.station.update({
+    where: { userId },
+    data: {
+      aluminiumPercentage: percentages.aluminiumPercentage,
+      steelPercentage: percentages.steelPercentage,
+      ...harvesters,
+      ...income,
+    },
+  })
 }

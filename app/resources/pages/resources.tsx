@@ -22,15 +22,22 @@ const ResourceList = () => {
     <div className="mb-16">
       <h2 className="py-2 border-b-2 border-t-2 border-white border-opacity-10 my-2">Resourcen</h2>
       <div className="mb-4 flex justify-around text-center">
-        <div>Aluminium {resources?.aluminium}</div>
-        <div>Stahl {resources?.steel}</div>
-        <div>Plutonium {resources?.plutonium}</div>
+        <div>
+          Aluminium {resources?.aluminium} (+{resources?.aluminiumIncome})
+        </div>
+        <div>
+          Stahl {resources?.steel} (+{resources?.steelIncome})
+        </div>
+        <div>
+          Plutonium {resources?.plutonium} (+{resources?.plutoniumIncome})
+        </div>
       </div>
     </div>
   )
 }
 
 const HarvesterDistribution = () => {
+  const [_, { refetch: refetchIncome }] = useQuery(getResources, null)
   const [harvesterData, { refetch: refetchHarvesters }] = useQuery(getHarvesters, null)
   const [updateHarvesterDistributionMutation] = useMutation(updateHarvesterDistribution)
 
@@ -84,6 +91,7 @@ const HarvesterDistribution = () => {
       steelPercentage: percentages.steelPercentage,
     })
     await refetchHarvesters()
+    await refetchIncome()
   }
 
   const harvesterDiffs = {

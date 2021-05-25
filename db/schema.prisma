@@ -84,18 +84,22 @@ model Station {
   x                   Int
   y                   Int
   harvester           Int      @default(10)
-  aluminiumPercentage Int      @default(40)
-  steelPercentage     Int      @default(35)
-  aluminiumHarvester  Int      @default(4)
-  steelHarvester      Int      @default(3)
-  plutoniumHarvester  Int      @default(3)
+  aluminiumPercentage Int      @default(0)
+  steelPercentage     Int      @default(0)
+  aluminiumHarvester  Int      @default(0)
+  steelHarvester      Int      @default(0)
+  plutoniumHarvester  Int      @default(0)
+  aluminiumIncome     Int      @default(0)
+  steelIncome         Int      @default(0)
+  plutoniumIncome     Int      @default(0)
   aluminium           Int      @default(1000)
   steel               Int      @default(1000)
   plutonium           Int      @default(1000)
   updatedAt           DateTime @updatedAt
 
-  fleets         Fleet[] @relation("fleetsInStation")
-  incomingFleets Fleet[] @relation("incomingFleets")
+  fleets              Fleet[]        @relation("fleetsInStation")
+  incomingFleets      Fleet[]        @relation("incomingFleets")
+  activeResourceNodes ResourceNode[]
 
   @@unique([x, y])
 }
@@ -107,9 +111,12 @@ enum ResourceType {
 }
 
 model ResourceNode {
+  id   String       @id @default(uuid())
   x    Int
   y    Int
   type ResourceType
+
+  harvestingStations Station[]
 
   @@unique([x, y])
 }

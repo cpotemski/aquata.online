@@ -1,4 +1,4 @@
-import { hash256, Ctx } from "blitz"
+import { Ctx, hash256 } from "blitz"
 import forgotPassword from "./forgotPassword"
 import db from "db"
 import previewEmail from "preview-email"

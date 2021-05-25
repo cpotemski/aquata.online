@@ -10,6 +10,9 @@ export default async function getResources(_ = null, { session }: Ctx) {
       aluminium: true,
       steel: true,
       plutonium: true,
+      aluminiumIncome: true,
+      steelIncome: true,
+      plutoniumIncome: true,
     },
   })
 }
