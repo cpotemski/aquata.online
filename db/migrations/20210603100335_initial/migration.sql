@@ -5,10 +5,10 @@ CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
 CREATE TYPE "TokenType" AS ENUM ('RESET_PASSWORD', 'CONFIRM_EMAIL');
 
 -- CreateEnum
-CREATE TYPE "ResourceType" AS ENUM ('aluminium', 'steel', 'plutonium');
+CREATE TYPE "ResourceType" AS ENUM ('ALUMINIUM', 'STEEL', 'PLUTONIUM');
 
 -- CreateEnum
-CREATE TYPE "BuildJobType" AS ENUM ('SHIP', 'HARVESTER');
+CREATE TYPE "ShipType" AS ENUM ('PIRANHA');
 
 -- CreateEnum
 CREATE TYPE "FleetAction" AS ENUM ('ATTACK', 'DEFEND');
@@ -96,10 +96,20 @@ CREATE TABLE "ResourceNode" (
 );
 
 -- CreateTable
-CREATE TABLE "BuildJob" (
+CREATE TABLE "HarvesterBuildJob" (
     "userId" TEXT NOT NULL,
     "id" TEXT NOT NULL,
-    "type" "BuildJobType" NOT NULL,
+    "amount" INTEGER NOT NULL,
+    "timeLeft" INTEGER NOT NULL,
+
+    PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ShipBuildJob" (
+    "userId" TEXT NOT NULL,
+    "id" TEXT NOT NULL,
+    "shipType" "ShipType" NOT NULL,
     "amount" INTEGER NOT NULL,
     "timeLeft" INTEGER NOT NULL,
 
@@ -219,7 +229,10 @@ CREATE UNIQUE INDEX "Station.x_y_unique" ON "Station"("x", "y");
 CREATE UNIQUE INDEX "ResourceNode.x_y_unique" ON "ResourceNode"("x", "y");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "BuildJob.userId_timeLeft_type_unique" ON "BuildJob"("userId", "timeLeft", "type");
+CREATE UNIQUE INDEX "HarvesterBuildJob.userId_timeLeft_unique" ON "HarvesterBuildJob"("userId", "timeLeft");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ShipBuildJob.userId_timeLeft_shipType_unique" ON "ShipBuildJob"("userId", "timeLeft", "shipType");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Commandship_userId_unique" ON "Commandship"("userId");
@@ -249,7 +262,10 @@ ALTER TABLE "Token" ADD FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE
 ALTER TABLE "Station" ADD FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "BuildJob" ADD FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "HarvesterBuildJob" ADD FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ShipBuildJob" ADD FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Fleet" ADD FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

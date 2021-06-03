@@ -28,17 +28,18 @@ model User {
   confirmed      Boolean  @default(false)
   active         Boolean  @default(true)
 
-  station       Station?
-  commandship   Commandship?
-  alliance      Alliance?      @relation(references: [id], fields: [allianceId])
-  allianceId    String?
-  tokens        Token[]
-  sessions      Session[]
-  buildJobs     BuildJob[]
-  fleets        Fleet[]
-  notifications Notification[]
-  sentMessages  Message[]
-  chats         Chat[]
+  station            Station?
+  commandship        Commandship?
+  alliance           Alliance?           @relation(references: [id], fields: [allianceId])
+  allianceId         String?
+  tokens             Token[]
+  sessions           Session[]
+  harvesterBuildJobs HarvesterBuildJob[]
+  shipBuildJobs      ShipBuildJob[]
+  fleets             Fleet[]
+  notifications      Notification[]
+  sentMessages       Message[]
+  chats              Chat[]
 }
 
 model Session {
@@ -121,21 +122,31 @@ model ResourceNode {
   @@unique([x, y])
 }
 
-enum BuildJobType {
-  SHIP
-  HARVESTER
-}
-
-model BuildJob {
+model HarvesterBuildJob {
   user   User   @relation(references: [id], fields: [userId])
   userId String
 
-  id       String       @id @default(uuid())
-  type     BuildJobType
+  id       String @id @default(uuid())
   amount   Int
   timeLeft Int
 
-  @@unique([userId, timeLeft, type])
+  @@unique([userId, timeLeft])
+}
+
+enum ShipType {
+  PIRANHA
+}
+
+model ShipBuildJob {
+  user   User   @relation(references: [id], fields: [userId])
+  userId String
+
+  id       String   @id @default(uuid())
+  shipType ShipType
+  amount   Int
+  timeLeft Int
+
+  @@unique([userId, timeLeft, shipType])
 }
 
 enum FleetAction {

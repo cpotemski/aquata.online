@@ -15,7 +15,17 @@ export const MapView = () => {
   const [activeNodes] = useQuery(getNearestResourceNodesQuery, null)
 
   return (
-    <div style={{ width: "100vw", height: "100vh", overflow: "auto" }}>
+    <div
+      style={{
+        width: "100vw",
+        height: "100vh",
+        overflow: "auto",
+        position: "absolute",
+        top: 0,
+        left: 0,
+        zIndex: -1,
+      }}
+    >
       <div className="relative" style={{ width: MAP_SIZE, height: MAP_SIZE }}>
         {resourceNodes?.map((node) => (
           <ResourceCell

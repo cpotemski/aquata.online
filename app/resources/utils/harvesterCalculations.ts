@@ -11,10 +11,10 @@ const HARVESTER_TRAVEL_SPEED = 3
 const HARVESTER_MINING_SPEED = 500
 const HARVESTER_UNLOAD_SPEED = 500
 
-type Resources = {
+export type Resources = {
   aluminium: number
   steel: number
-  plutonium: number
+  plutonium?: number
 }
 
 type Percentages = {
@@ -183,3 +183,17 @@ export const updateHarvesterDistribution = async (userId: string, input) => {
     },
   })
 }
+
+export const sumOfResources = (resources: Resources[]) =>
+  resources.reduce(
+    (sum, current) => ({
+      aluminium: sum.aluminium + current.aluminium,
+      steel: sum.steel + current.steel,
+    }),
+    { aluminium: 0, steel: 0 }
+  )
+
+export const moreOrEqualResourcesThan = (a: Resources, b: Resources) =>
+  (a.aluminium && b.aluminium ? a.aluminium >= b.aluminium : true) &&
+  (a.steel && b.steel ? a.steel >= b.steel : true) &&
+  (a.plutonium && b.plutonium ? a.plutonium >= b.plutonium : true)

@@ -13,7 +13,7 @@ const MapPage: BlitzPage = () => {
   )
 }
 
-MapPage.getLayout = (page) => <Layout title="Map"> {page} </Layout>
+MapPage.getLayout = (page) => <Layout title="Karte"> {page} </Layout>
 MapPage.authenticate = { redirectTo: "/login" }
 
 export default MapPage

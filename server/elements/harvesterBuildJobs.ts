@@ -2,10 +2,10 @@ import {
   calculateHarvestersFromPercentages,
   calculateIncome,
 } from "app/resources/utils/harvesterCalculations"
-import db, { BuildJobType } from "db"
+import db from "db"
 
-export async function processBuildJobs() {
-  await db.buildJob.updateMany({
+export async function processHarvesterBuildJobs() {
+  await db.harvesterBuildJob.updateMany({
     data: {
       timeLeft: {
         decrement: 1,
@@ -13,9 +13,8 @@ export async function processBuildJobs() {
     },
   })
 
-  const finishedHarvesters = await db.buildJob.findMany({
+  const finishedHarvesters = await db.harvesterBuildJob.findMany({
     where: {
-      type: BuildJobType.HARVESTER,
       timeLeft: 0,
     },
     select: {
@@ -62,7 +61,7 @@ export async function processBuildJobs() {
         },
       })
     }),
-    db.buildJob.deleteMany({
+    db.harvesterBuildJob.deleteMany({
       where: {
         id: {
           in: finishedHarvesters.map(({ id }) => id),

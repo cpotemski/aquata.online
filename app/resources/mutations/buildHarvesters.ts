@@ -1,9 +1,11 @@
 import { Ctx } from "blitz"
-import db, { BuildJobType } from "db"
+import db from "db"
 import * as z from "zod"
 import { calculateHarvesterCosts, enoughResources } from "../utils/harvesterCalculations"
 
 const BuildHarvester = z.number()
+
+const HARVESTER_BUILD_TIME = 8
 
 export default async function buildHarvester(
   amount: z.infer<typeof BuildHarvester>,
@@ -26,12 +28,11 @@ export default async function buildHarvester(
           steel: { decrement: costs.steel },
         },
       }),
-      db.buildJob.upsert({
+      db.harvesterBuildJob.upsert({
         where: {
-          userId_timeLeft_type: {
+          userId_timeLeft: {
             userId,
-            timeLeft: 8,
-            type: BuildJobType.HARVESTER,
+            timeLeft: HARVESTER_BUILD_TIME,
           },
         },
         update: {
@@ -40,9 +41,8 @@ export default async function buildHarvester(
           },
         },
         create: {
-          type: BuildJobType.HARVESTER,
           amount,
-          timeLeft: 8,
+          timeLeft: HARVESTER_BUILD_TIME,
           userId: userId,
         },
       }),

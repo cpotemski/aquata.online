@@ -216,7 +216,7 @@ const Resources: BlitzPage = () => {
 }
 
 Resources.suppressFirstRenderFlicker = true
-Resources.getLayout = (page) => <Layout title="Resources">{page}</Layout>
+Resources.getLayout = (page) => <Layout title="Resourcen">{page}</Layout>
 Resources.authenticate = { redirectTo: "/login" }
 
 export default Resources

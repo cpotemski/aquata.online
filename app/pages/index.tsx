@@ -59,10 +59,13 @@ const Home: BlitzPage = () => {
 
       <ul>
         <li>
-          <Link href={Routes.Resources()}>Resources</Link>
+          <Link href={Routes.Resources()}>Resourcen</Link>
         </li>
         <li>
-          <Link href={Routes.MapPage()}>Map</Link>
+          <Link href={Routes.Ships()}>Schiffe</Link>
+        </li>
+        <li>
+          <Link href={Routes.MapPage()}>Karte</Link>
         </li>
       </ul>
     </>
